@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kecamatan Tanete Riaja - Kabupaten Barru</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome untuk Ikon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-50">
+    <!-- ==================== NAVBAR ==================== -->
+    <header class="bg-white shadow-sm fixed w-full top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo & Title -->
+          <div class="flex items-center gap-3">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Lambang_Kabupaten_Badung.png/409px-Lambang_Kabupaten_Badung.png"
+              alt="Logo Badung"
+              class="h-12 w-auto"
+            />
+            <div class="flex flex-col">
+              <span
+                class="font-bold text-gray-800 text-sm md:text-base leading-tight"
+                >KECAMATAN KUTA UTARA</span
+              >
+              <span
+                class="font-bold text-gray-800 text-sm md:text-base leading-tight"
+                >KABUPATEN BADUNG</span
+              >
+            </div>
+          </div>
+
+          <!-- Menu Button -->
+          <div>
+            <button
+              id="menu-btn"
+              class="flex items-center gap-2 border border-gray-300 rounded px-4 py-2 text-gray-700 hover:bg-gray-50 transition"
+            >
+              <i class="fa-solid fa-bars" id="menu-icon"></i>
+              <span class="font-medium">Menu</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropdown / Sidebar Menu (Hidden by default) -->
+      <div
+        id="mobile-menu"
+        class="hidden border-t border-gray-200 bg-white w-full"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <ul
+            class="flex flex-col space-y-4 text-sm font-semibold text-gray-700"
+          >
+            <li><a href="#" class="text-red-500 block">Beranda</a></li>
+            <li class="flex justify-between items-center cursor-pointer">
+              Profil <i class="fa-solid fa-chevron-down text-xs"></i>
+            </li>
+            <li class="flex justify-between items-center cursor-pointer">
+              PPID <i class="fa-solid fa-chevron-down text-xs"></i>
+            </li>
+            <li class="flex justify-between items-center cursor-pointer">
+              Pengaduan <i class="fa-solid fa-chevron-down text-xs"></i>
+            </li>
+            <li class="flex justify-between items-center cursor-pointer">
+              Informasi <i class="fa-solid fa-chevron-down text-xs"></i>
+            </li>
+            <li class="flex justify-between items-center cursor-pointer">
+              Pelayanan <i class="fa-solid fa-chevron-down text-xs"></i>
+            </li>
+            <li class="flex justify-between items-center cursor-pointer">
+              Galeri <i class="fa-solid fa-chevron-down text-xs"></i>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==================== BERANDA / HERO ==================== -->
+    <main class="mt-20 relative">
+      <!-- Hero Section -->
+      <section
+        class="relative w-full h-[500px] bg-gray-900 flex items-center justify-center"
+      >
+        <!-- Background Image -->
+        <img
+          src="https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Background Kuta Utara"
+          class="absolute inset-0 w-full h-full object-cover opacity-60"
+        />
+
+        <!-- Gradient Overlay -->
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50"
+        ></div>
+
+        <!-- Text Content -->
+        <div class="relative z-10 text-center text-white px-4">
+          <h1 class="text-4xl md:text-5xl font-bold mb-2">
+            Kecamatan Kuta Utara
+          </h1>
+          <p class="text-xl md:text-2xl font-light tracking-widest uppercase">
+            KABUPATEN BADUNG
+          </p>
+        </div>
+
+        <!-- Floating Accessibility Buttons (Left Side) -->
+        <div
+          class="absolute left-0 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-20"
+        >
+          <button
+            class="bg-orange-500 text-white p-3 rounded-r-lg shadow-lg hover:bg-orange-600"
+            aria-label="Aksesibilitas Suara"
+          >
+            <i class="fa-solid fa-ear-listen"></i>
+          </button>
+          <button
+            class="bg-orange-500 text-white p-3 rounded-r-lg shadow-lg hover:bg-orange-600"
+            aria-label="Aksesibilitas Fisik"
+          >
+            <i class="fa-solid fa-wheelchair"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- Tab Section (Kata Sambutan & Maklumat) -->
+      <section class="w-full bg-pink-50/30 py-10">
+        <div class="max-w-7xl mx-auto px-4 flex justify-center gap-4">
+          <button
+            class="bg-red-600 text-white px-6 py-2 rounded-full font-semibold shadow hover:bg-red-700 transition"
+          >
+            Kata Sambutan
+          </button>
+          <button
+            class="bg-pink-100 text-gray-700 px-6 py-2 rounded-full font-semibold shadow hover:bg-pink-200 transition"
+          >
+            Maklumat
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-[#111827] text-gray-300 relative mt-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <!-- Kolom 1: Media Sosial -->
+          <div>
+            <h3 class="text-white text-lg font-bold mb-4">Media Sosial</h3>
+            <p class="text-sm mb-6 leading-relaxed">
+              Website resmi Kecamatan Kuta Utara<br />Kabupaten Badung
+            </p>
+            <div class="flex gap-4">
+              <a href="#" class="text-gray-300 hover:text-white text-xl"
+                ><i class="fa-brands fa-facebook-f"></i
+              ></a>
+              <a href="#" class="text-gray-300 hover:text-white text-xl"
+                ><i class="fa-brands fa-twitter"></i
+              ></a>
+              <a href="#" class="text-gray-300 hover:text-white text-xl"
+                ><i class="fa-brands fa-instagram"></i
+              ></a>
+              <a href="#" class="text-gray-300 hover:text-white text-xl"
+                ><i class="fa-brands fa-youtube"></i
+              ></a>
+            </div>
+          </div>
+
+          <!-- Kolom 2: Kontak Kami -->
+          <div>
+            <h3 class="text-white text-lg font-bold mb-4">Kontak Kami</h3>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start gap-3">
+                <i class="fa-solid fa-location-dot mt-1 text-white"></i>
+                <span>Jalan Bedugul No. 2 Br. Anyar Kaja<br />Kerobokan</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i class="fa-solid fa-phone text-white"></i>
+                <span>0361 - 418741</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i class="fa-solid fa-envelope text-white"></i>
+                <span>info@kutautara.badungkab.go.id</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Kolom 3: Situs Terkait -->
+          <div>
+            <h3 class="text-white text-lg font-bold mb-4">Situs Terkait</h3>
+            <div class="space-y-4">
+              <!-- Website Badung -->
+              <div class="flex items-center gap-3">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Lambang_Kabupaten_Badung.png/409px-Lambang_Kabupaten_Badung.png"
+                  alt="Badung"
+                  class="w-10 h-10 bg-white rounded-full p-1 object-contain"
+                />
+                <div>
+                  <p class="font-bold text-white text-sm">Website Badung</p>
+                  <a href="#" class="text-sm hover:underline"
+                    >badungkab.go.id</a
+                  >
+                </div>
+              </div>
+              <!-- Kontak Bupati -->
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden"
+                >
+                  <i class="fa-solid fa-user-tie text-gray-800"></i>
+                </div>
+                <div>
+                  <p class="font-bold text-white text-sm">Kontak Bupati</p>
+                  <p class="text-sm">Layanan Pengaduan Masyarakat</p>
+                </div>
+              </div>
+              <!-- Badges -->
+              <div class="flex gap-2 pt-2">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+                  alt="App Store"
+                  class="h-8 cursor-pointer"
+                />
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                  alt="Google Play"
+                  class="h-8 cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Copyright -->
+      <div class="bg-[#0f1423] py-4 text-center border-t border-gray-700">
+        <p class="text-xs text-gray-400">
+          Copyright © 2026 Pemerintah Kabupaten Badung. All rights reserved.
+        </p>
+      </div>
+
+      <!-- Scroll to Top Button -->
+      <button
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        class="absolute bottom-4 right-4 bg-red-600 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-red-700 transition"
+        aria-label="Ke atas"
+      >
+        <i class="fa-solid fa-chevron-up"></i>
+      </button>
+    </footer>
+
+    <!-- Script JavaScript -->
+    <script>
+      const menuBtn = document.getElementById("menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const menuIcon = document.getElementById("menu-icon");
+
+      menuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+        if (mobileMenu.classList.contains("hidden")) {
+          menuIcon.classList.remove("fa-xmark");
+          menuIcon.classList.add("fa-bars");
+        } else {
+          menuIcon.classList.remove("fa-bars");
+          menuIcon.classList.add("fa-xmark");
+        }
+      });
+    </script>
+  </body>
+</html>
