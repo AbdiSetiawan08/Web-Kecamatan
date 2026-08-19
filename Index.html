@@ -3,185 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil - Kecamatan Tanete Riaja</title>
-    <!-- Tailwind CSS (Untuk Grid & Layout Dasar) -->
+    <title>Beranda - Kecamatan Tanete Riaja</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome untuk Ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Menghubungkan File CSS Eksternal -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-50">
-
-    <!-- ==================== NAVBAR ==================== -->
-    <header class="navbar bg-white shadow-sm fixed w-full top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <!-- Logo & Title -->
-                <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Lambang_Kabupaten_Badung.png/409px-Lambang_Kabupaten_Badung.png" alt="Logo Badung" class="h-12 w-auto">
-                    <div class="flex flex-col">
-                        <span class="font-bold text-gray-800 text-sm md:text-base leading-tight">KECAMATAN TANETE RIAJA</span>
-                        <span class="font-bold text-gray-800 text-sm md:text-base leading-tight">KABUPATEN BARRU</span>
-                    </div>
-                </div>
-
-                <!-- Menu Button -->
-                <div>
-                    <button id="menu-btn" class="flex items-center gap-2 border border-gray-300 rounded px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-                        <i class="fa-solid fa-bars" id="menu-icon"></i>
-                        <span class="font-medium">Menu</span>
-                    </button>
-                </div>
+<body>
+    <header class="site-header">
+        <div class="topbar">
+            <div class="container-wide topbar-inner">
+                <span><i class="fa-solid fa-location-dot"></i> Kabupaten Barru, Sulawesi Selatan</span>
+                <span><i class="fa-solid fa-envelope"></i> kec-taneteriaja@barrukab.go.id</span>
             </div>
         </div>
 
-        <!-- Dropdown Menu -->
-        <div id="mobile-menu" class="hidden border-t border-gray-200 bg-white w-full shadow-lg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <ul class="flex flex-col space-y-4 text-sm font-semibold text-gray-700">
-                    <li><a href="index.html" class="hover:text-red-500 block">Beranda</a></li>
-                    <li class="text-red-500 flex justify-between items-center cursor-pointer">Profil <i class="fa-solid fa-chevron-down text-xs"></i></li>
-                    <li class="flex justify-between items-center cursor-pointer hover:text-red-500">PPID <i class="fa-solid fa-chevron-down text-xs"></i></li>
-                    <li class="flex justify-between items-center cursor-pointer hover:text-red-500">Pengaduan <i class="fa-solid fa-chevron-down text-xs"></i></li>
-                    <li class="flex justify-between items-center cursor-pointer hover:text-red-500">Informasi <i class="fa-solid fa-chevron-down text-xs"></i></li>
-                    <li class="flex justify-between items-center cursor-pointer hover:text-red-500">Pelayanan <i class="fa-solid fa-chevron-down text-xs"></i></li>
-                    <li class="flex justify-between items-center cursor-pointer hover:text-red-500">Galeri <i class="fa-solid fa-chevron-down text-xs"></i></li>
-                </ul>
-            </div>
+        <nav class="container-wide navbar">
+            <a href="Index.html" class="brand">
+                <div class="brand-mark">
+                    <img src="assets/pngwing.com.png" alt="Logo Kabupaten Barru">
+                </div>
+                <div>
+                    <strong>Kecamatan Tanete Riaja</strong>
+                    <span>Kabupaten Barru</span>
+                </div>
+            </a>
+
+            <button id="menu-btn" class="menu-button" aria-label="Buka menu">
+                <i class="fa-solid fa-bars" id="menu-icon"></i>
+                <span>Menu</span>
+            </button>
+
+            <ul class="desktop-menu">
+                <li><a href="#beranda">Beranda</a></li>
+                <li><a href="#profil">Profil</a></li>
+                <li><a href="#layanan">Pelayanan</a></li>
+                <li><a href="#informasi">Informasi</a></li>
+                <li><a href="#kontak">Kontak</a></li>
+            </ul>
+        </nav>
+
+        <div id="mobile-menu" class="mobile-menu hidden">
+            <a href="#beranda">Beranda</a>
+            <a href="#profil">Profil</a>
+            <a href="#layanan">Pelayanan</a>
+            <a href="#informasi">Informasi</a>
+            <a href="#kontak">Kontak</a>
         </div>
     </header>
 
-    <!-- ==================== HEADER PROFIL ==================== -->
-    <main class="mt-20">
-        <!-- Banner Header menggunakan custom CSS -->
-        <section class="banner-profil w-full flex items-center justify-center text-center">
-            <div class="z-10 px-4">
-                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Profil Kecamatan</h1>
-                <p class="text-lg text-gray-200 uppercase tracking-wider">Mengenal Lebih Dekat Kuta Utara</p>
+    <main id="beranda">
+        <section class="hero">
+            <div class="hero-slide hero-slide-a is-active"></div>
+            <div class="hero-slide hero-slide-b"></div>
+            <div class="container-wide hero-content">
+                <p class="eyebrow">Website Resmi Pemerintah Kecamatan</p>
+                <h1>Kecamatan Tanete Riaja</h1>
+                <p class="hero-subtitle">Kabupaten Barru</p>
+                <p class="hero-text">
+                    Pusat informasi pelayanan publik, kegiatan pemerintahan, pengumuman, dan kanal aspirasi masyarakat.
+                </p>
+                <div class="hero-actions">
+                    <a href="#layanan" class="primary-button">Layanan Kami</a>
+                    <a href="#informasi" class="secondary-button">Informasi Terbaru</a>
+                </div>
             </div>
         </section>
 
-        <!-- ==================== KONTEN PROFIL ==================== -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            
-            <!-- Visi & Misi -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
-                <!-- Visi -->
-                <div class="custom-card bg-white p-8 rounded-xl shadow-md border-t-4 border-red-600">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-xl">
-                            <i class="fa-solid fa-eye"></i>
+        <section id="profil" class="section profile-section">
+            <div class="container-wide">
+                <div class="section-heading">
+                    <p>Profile</p>
+                    <h2>Kata Sambutan</h2>
+                </div>
+
+                <div class="profile-grid">
+                    <article class="leader-panel">
+                        <div class="leader-photo">
+                            <i class="fa-solid fa-user-tie"></i>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-800">Visi</h2>
-                    </div>
-                    <p class="text-gray-600 leading-relaxed italic">
-                        "Terwujudnya KECAMATAN TANETE RIAJA yang Sejahtera, Berbudaya, dan Berdaya Saing Global melalui Pelayanan Publik yang Prima."
-                    </p>
-                </div>
-                <!-- Misi -->
-                <div class="custom-card bg-white p-8 rounded-xl shadow-md border-t-4 border-blue-600">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl">
-                            <i class="fa-solid fa-bullseye"></i>
+                        <div>
+                            <h3>Camat Tanete Riaja</h3>
+                            <p>Nama Camat, S.Sos.</p>
+                            <span>NIP. 00000000 000000 0 000</span>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-800">Misi</h2>
+                    </article>
+
+                    <article class="welcome-panel">
+                        <i class="fa-solid fa-quote-left quote-icon"></i>
+                        <p>
+                            Selamat datang di website resmi Kecamatan Tanete Riaja Kabupaten Barru. Media ini hadir sebagai wujud
+                            keterbukaan informasi dan komitmen kami dalam memberikan pelayanan publik yang mudah, cepat, dan akuntabel.
+                        </p>
+                        <p>
+                            Kami mengajak seluruh masyarakat untuk memanfaatkan kanal informasi ini sebagai ruang memperoleh layanan,
+                            menyampaikan aspirasi, dan mengikuti perkembangan pembangunan di wilayah Kecamatan Tanete Riaja.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="layanan" class="section services-section">
+            <div class="container-wide">
+                <div class="section-heading centered">
+                    <p>Layanan Kami</p>
+                    <h2>Pelayanan Publik Kecamatan</h2>
+                    <span>Untuk menjaga kualitas pelayanan, pemerintah kecamatan berkomitmen memberi layanan yang transparan dan responsif.</span>
+                </div>
+
+                <div class="service-grid">
+                    <a href="#" class="service-card"><i class="fa-solid fa-file-signature"></i><span>Administrasi Kependudukan</span></a>
+                    <a href="#" class="service-card"><i class="fa-solid fa-comments"></i><span>Aspirasi Warga</span></a>
+                    <a href="#" class="service-card"><i class="fa-solid fa-bullhorn"></i><span>Pengaduan Masyarakat</span></a>
+                    <a href="#" class="service-card"><i class="fa-solid fa-chart-line"></i><span>Survei Kepuasan</span></a>
+                    <a href="#" class="service-card"><i class="fa-solid fa-calendar-check"></i><span>Agenda Kegiatan</span></a>
+                    <a href="#" class="service-card"><i class="fa-solid fa-folder-open"></i><span>Dokumen Publik</span></a>
+                    <a href="#" class="service-card"><i class="fa-solid fa-handshake-angle"></i><span>Pelayanan Terpadu</span></a>
+                    <a href="#" class="service-card"><i class="fa-brands fa-instagram"></i><span>Media Sosial</span></a>
+                </div>
+            </div>
+        </section>
+
+        <section id="informasi" class="section news-section">
+            <div class="container-wide news-layout">
+                <div>
+                    <div class="section-heading">
+                        <p>Informasi Terbaru</p>
+                        <h2>Kegiatan dan Berita</h2>
                     </div>
-                    <ul class="text-gray-600 leading-relaxed list-disc list-inside space-y-2">
-                        <li>Meningkatkan kualitas tata kelola pemerintahan yang baik.</li>
-                        <li>Meningkatkan kualitas pelayanan publik berbasis teknologi.</li>
-                        <li>Melestarikan nilai-nilai budaya dan kearifan lokal.</li>
-                        <li>Mendorong pemberdayaan ekonomi masyarakat dan pariwisata.</li>
-                    </ul>
-                </div>
-            </div>
 
-            <!-- Sejarah Singkat -->
-            <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-16">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Sejarah Kuta Utara</h2>
-                <div class="text-gray-600 leading-relaxed space-y-4 text-justify">
-                    <p>
-                        KECAMATAN TANETE RIAJA merupakan salah satu kecamatan yang terletak di KABUPATEN BARRU, Provinsi Bali. Wilayah ini dikenal sebagai salah satu pusat pariwisata yang berkembang pesat, menghubungkan kawasan tradisional dengan gaya hidup modern.
-                    </p>
-                    <p>
-                        Dengan luas wilayah yang membentang dari garis pantai hingga ke area pemukiman dan pertanian, Kuta Utara terdiri dari beberapa desa dan kelurahan yang memiliki karakteristik unik, seperti Canggu yang terkenal dengan ombak selancarnya, serta Kerobokan yang menjadi pusat bisnis dan kuliner.
-                    </p>
-                </div>
-            </div>
+                    <div class="featured-news">
+                        <div class="news-image"></div>
+                        <div class="news-content">
+                            <span class="category">Berita</span>
+                            <h3>Pemerintah Kecamatan Tanete Riaja Menggelar Rapat Koordinasi Pelayanan Publik</h3>
+                            <p>
+                                Rapat koordinasi dilaksanakan untuk meningkatkan mutu layanan dan memperkuat sinergi antar desa
+                                dalam mendukung kebutuhan masyarakat.
+                            </p>
+                            <div class="meta"><i class="fa-regular fa-calendar"></i> 19 Agu 2026 <span>·</span> Tanete Riaja</div>
+                        </div>
+                    </div>
 
-            <!-- Struktur Organisasi (Placeholder) -->
-            <div class="text-center">
-                <h2 class="text-3xl font-bold text-gray-800 mb-8">Struktur Organisasi</h2>
-                <div class="bg-gray-100 w-full max-w-4xl mx-auto h-96 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center">
-                    <div class="text-gray-400 flex flex-col items-center">
-                        <i class="fa-solid fa-sitemap text-5xl mb-3"></i>
-                        <p class="text-lg">Bagan Struktur Organisasi Kecamatan</p>
-                        <p class="text-sm">(Ruang untuk gambar struktur organisasi)</p>
+                    <div class="news-list">
+                        <article>
+                            <h3>Sosialisasi Administrasi Kependudukan bagi Masyarakat Desa</h3>
+                            <p>Pelayanan jemput bola dilakukan untuk memudahkan warga mengakses dokumen administrasi.</p>
+                            <span>18 Agu 2026 · Berita</span>
+                        </article>
+                        <article>
+                            <h3>Gotong Royong Kebersihan Lingkungan Kecamatan</h3>
+                            <p>Kegiatan bersama perangkat desa dan masyarakat untuk menjaga lingkungan tetap tertib.</p>
+                            <span>16 Agu 2026 · Kegiatan</span>
+                        </article>
                     </div>
                 </div>
-            </div>
 
+                <aside class="announcement-panel">
+                    <div class="section-heading">
+                        <p>Pengumuman</p>
+                        <h2>Info Penting</h2>
+                    </div>
+                    <ol>
+                        <li>
+                            <a href="#">Jadwal pelayanan administrasi kantor kecamatan</a>
+                            <span>19 Agu 2026 · Pengumuman</span>
+                        </li>
+                        <li>
+                            <a href="#">Keterbukaan informasi publik Kecamatan Tanete Riaja</a>
+                            <span>12 Agu 2026 · PPID</span>
+                        </li>
+                        <li>
+                            <a href="#">Pelaksanaan survei kepuasan masyarakat tahun 2026</a>
+                            <span>05 Agu 2026 · Layanan</span>
+                        </li>
+                    </ol>
+                    <a href="#" class="text-link">Lihat semua</a>
+                </aside>
+            </div>
+        </section>
+
+        <section class="survey-section">
+            <div class="container-wide survey-inner">
+                <div class="survey-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+                <div>
+                    <h2>Bagaimana Pengalaman Anda?</h2>
+                    <p>Pendapat Anda sangat berarti untuk membantu meningkatkan kualitas pelayanan website pemerintah kecamatan.</p>
+                </div>
+                <a href="#" class="primary-button">Isi Survei</a>
+            </div>
         </section>
     </main>
 
-    <!-- ==================== FOOTER ==================== -->
-    <footer class="footer-custom relative mt-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                
-                <!-- Kolom 1: Media Sosial -->
-                <div>
-                    <h3 class="text-white text-lg font-bold mb-4">Media Sosial</h3>
-                    <p class="text-sm mb-6 leading-relaxed text-gray-300">Website resmi KECAMATAN TANETE RIAJA<br>KABUPATEN BARRU</p>
-                    <div class="flex gap-4">
-                        <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
-                    </div>
+    <footer id="kontak" class="footer-custom">
+        <div class="container-wide footer-grid">
+            <div>
+                <h3>Media Sosial</h3>
+                <p>Website resmi Kecamatan Tanete Riaja Kabupaten Barru.</p>
+                <div class="social-row">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="Youtube"><i class="fa-brands fa-youtube"></i></a>
                 </div>
+            </div>
 
-                <!-- Kolom 2: Kontak Kami -->
-                <div>
-                    <h3 class="text-white text-lg font-bold mb-4">Kontak Kami</h3>
-                    <ul class="space-y-4 text-sm text-gray-300">
-                        <li class="flex items-start gap-3">
-                            <i class="fa-solid fa-location-dot mt-1 text-white"></i>
-                            <span>Jalan Bedugul No. 2 Br. Anyar Kaja<br>Kerobokan</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fa-solid fa-phone text-white"></i>
-                            <span>0361 - 418741</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fa-solid fa-envelope text-white"></i>
-                            <span>info@kutautara.badungkab.go.id</span>
-                        </li>
-                    </ul>
-                </div>
+            <div>
+                <h3>Kontak Kami</h3>
+                <ul class="contact-list">
+                    <li><i class="fa-solid fa-location-dot"></i> Kecamatan Tanete Riaja, Kabupaten Barru, Sulawesi Selatan</li>
+                    <li><i class="fa-solid fa-phone"></i> (0427) 000000</li>
+                    <li><i class="fa-solid fa-envelope"></i> kec-taneteriaja@barrukab.go.id</li>
+                </ul>
+            </div>
 
-                <!-- Kolom 3: Situs Terkait -->
-                <div>
-                    <h3 class="text-white text-lg font-bold mb-4">Situs Terkait</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Lambang_Kabupaten_Badung.png/409px-Lambang_Kabupaten_Badung.png" alt="Badung" class="w-10 h-10 bg-white rounded-full p-1 object-contain">
-                            <div>
-                                <p class="font-bold text-white text-sm">Website Badung</p>
-                                <a href="#" class="text-sm text-gray-300 hover:underline">badungkab.go.id</a>
-                            </div>
-                        </div>
-                        <div class="flex gap-2 pt-4">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" class="h-8 cursor-pointer hover:opacity-80 transition">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="h-8 cursor-pointer hover:opacity-80 transition">
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <h3>Informasi</h3>
+                <ul class="footer-links">
+                    <li><a href="#profil">Profil</a></li>
+                    <li><a href="#layanan">Pelayanan</a></li>
+                    <li><a href="#informasi">Berita</a></li>
+                    <li><a href="#kontak">Kontak</a></li>
+                </ul>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>Copyright © 2026 Pemerintah KABUPATEN BARRU. All rights reserved.</p>
+            <p>Copyright © 2026 Pemerintah Kabupaten Barru. All rights reserved.</p>
         </div>
 
         <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="scroll-top-btn" aria-label="Ke atas">
@@ -189,7 +236,6 @@
         </button>
     </footer>
 
-    <!-- Script Interaksi Menu -->
     <script>
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -197,14 +243,35 @@
 
         menuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
-            if (mobileMenu.classList.contains('hidden')) {
-                menuIcon.classList.remove('fa-xmark');
-                menuIcon.classList.add('fa-bars');
-            } else {
-                menuIcon.classList.remove('fa-bars');
-                menuIcon.classList.add('fa-xmark');
-            }
+            menuIcon.classList.toggle('fa-bars');
+            menuIcon.classList.toggle('fa-xmark');
         });
+
+        const heroSlides = [
+            document.querySelector('.hero-slide-a'),
+            document.querySelector('.hero-slide-b')
+        ];
+        const heroImages = [
+            'assets/01kkxf7bbvm0mepg9p4k867aqd.webp',
+            'assets/air-terjun-waesai--profile1665636251.jpeg',
+            'assets/images (1).jpg.jpeg'
+        ];
+        let heroImageIndex = 0;
+        let activeHeroSlide = 0;
+
+        heroSlides[0].style.backgroundImage = `url("${heroImages[0]}")`;
+        heroSlides[1].style.backgroundImage = `url("${heroImages[1]}")`;
+
+        setInterval(() => {
+            heroImageIndex = (heroImageIndex + 1) % heroImages.length;
+            const nextHeroSlide = activeHeroSlide === 0 ? 1 : 0;
+
+            heroSlides[nextHeroSlide].style.backgroundImage = `url("${heroImages[heroImageIndex]}")`;
+            heroSlides[nextHeroSlide].classList.add('is-active');
+            heroSlides[activeHeroSlide].classList.remove('is-active');
+
+            activeHeroSlide = nextHeroSlide;
+        }, 4000);
     </script>
 </body>
 </html>
