@@ -33,12 +33,17 @@
                 <span>Menu</span>
             </button>
 
-            <ul class="desktop-menu">
+            <ul class="desktop-menu" style="display: flex; align-items: center;">
                 <li><a href="#beranda">Beranda</a></li>
                 <li><a href="#profil">Profil</a></li>
                 <li><a href="#layanan">Pelayanan</a></li>
                 <li><a href="#informasi">Informasi</a></li>
                 <li><a href="#kontak">Kontak</a></li>
+                <li style="margin-left: 15px;">
+                    <a href="login.html" style="background-color: #2563eb; color: #ffffff !important; padding: 8px 18px; border-radius: 6px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: background 0.3s; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" onmouseover="this.style.backgroundColor='#1d4ed8'" onmouseout="this.style.backgroundColor='#2563eb'">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </a>
+                </li>
             </ul>
         </nav>
 
@@ -48,6 +53,11 @@
             <a href="#layanan">Pelayanan</a>
             <a href="#informasi">Informasi</a>
             <a href="#kontak">Kontak</a>
+            <!-- TAMBAHAN: Tombol Login Admin Mobile -->
+            <!-- Ubah dari href="admin.html" menjadi href="login.html" -->
+            <a href="login.html" style="color: #2563eb !important; font-weight: bold; border-top: 1px solid #e5e7eb; padding-top: 15px; margin-top: 10px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-user-shield"></i> Login Admin
+            </a>
         </div>
     </header>
 
@@ -211,8 +221,7 @@
                 <h3>Kontak Kami</h3>
                 <ul class="contact-list">
                     <li><i class="fa-solid fa-location-dot"></i> Kecamatan Tanete Riaja, Kabupaten Barru, Sulawesi Selatan</li>
-                    <li><i class="fa-solid fa-phone"></i> (0427) 000000</li>
-                    <li><i class="fa-solid fa-envelope"></i> kec-taneteriaja@barrukab.go.id</li>
+                    <li><i class="fa-solid fa-envelope"></i>ktrcamattaneteriaja@gmail.com</li>
                 </ul>
             </div>
 

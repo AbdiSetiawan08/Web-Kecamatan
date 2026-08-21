@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Kecamatan Tanete Riaja</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brand: { dark: '#111827', card: '#ffffff', bg: '#f3f4f6' } }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-bg font-sans text-gray-800 antialiased flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="bg-brand-dark w-64 flex-shrink-0 flex flex-col transition-all duration-300 shadow-xl z-20 relative">
+        <div class="h-20 flex items-center px-6 border-b border-gray-700 bg-black bg-opacity-20">
+            <img src="assets/pngwing.com.png" alt="Logo" class="h-10 w-auto mr-3">
+            <div class="flex flex-col text-white">
+                <strong class="text-sm font-bold tracking-wide">Kecamatan</strong>
+                <span class="text-xs text-gray-400">Tanete Riaja</span>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1" id="menu-container">
+            <a href="#" onclick="switchMenu('tulis-berita', this)" class="menu-item flex items-center px-6 py-3 bg-blue-600 bg-opacity-20 text-blue-400 border-l-4 border-blue-500 font-semibold transition-colors">
+                <i class="fa-solid fa-file-pen w-6"></i><span>Tulis Berita</span>
+            </a>
+            <a href="#" onclick="switchMenu('daftar-berita', this)" class="menu-item flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-gray-800 border-l-4 border-transparent hover:border-gray-500 transition-colors">
+                <i class="fa-solid fa-table-list w-6"></i><span>Daftar Berita</span>
+            </a>
+            <a href="#" onclick="switchMenu('dokumen', this)" class="menu-item flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-gray-800 border-l-4 border-transparent hover:border-gray-500 transition-colors">
+                <i class="fa-solid fa-folder-open w-6"></i><span>Dokumen Publik</span>
+            </a>
+            <!-- MENU PENGATURAN AKUN TELAH DIHAPUS -->
+        </nav>
+
+        <div class="p-4 border-t border-gray-700">
+            <a href="Index.html" class="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors text-sm font-semibold shadow-md">
+                <i class="fa-solid fa-right-from-bracket"></i> Keluar (Logout)
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 z-10">
+            <h1 class="text-xl font-semibold text-gray-700" id="header-title">Panel Administrator</h1>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden md:block">
+                    <p class="text-sm font-bold text-gray-700">Admin Utama</p>
+                    <p class="text-xs text-gray-500">Administrator</p>
+                </div>
+                <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 border border-blue-200">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-8">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- SECTION: TULIS BERITA -->
+                <section id="tulis-berita" class="content-section">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="border-b border-gray-100 px-8 py-5 bg-gray-50/50">
+                            <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-plus-circle text-blue-500 mr-2"></i> Tambah Berita / Informasi Baru</h2>
+                        </div>
+                        <div class="p-8">
+                            <form id="form-berita" class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Judul Berita <span class="text-red-500">*</span></label>
+                                    <input class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" type="text" placeholder="Masukkan judul..." required>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori <span class="text-red-500">*</span></label>
+                                        <select class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                                            <option>Berita Utama</option>
+                                            <option>Pengumuman</option>
+                                            <option>Kegiatan</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Publikasi</label>
+                                        <input class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer" id="tanggal" type="date">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Gambar / Thumbnail <span class="text-red-500">*</span></label>
+                                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors bg-gray-50">
+                                        <div class="space-y-2 text-center">
+                                            <i class="fa-regular fa-image text-4xl text-gray-400"></i>
+                                            <div class="flex text-sm text-gray-600 justify-center">
+                                                <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 px-2">
+                                                    <span>Pilih file gambar</span>
+                                                    <input id="file-upload" type="file" class="sr-only" accept="image/*">
+                                                </label>
+                                                <p class="pl-1" id="file-name-display">atau drag and drop</p>
+                                            </div>
+                                            <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks. 2MB)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Isi Konten <span class="text-red-500">*</span></label>
+                                    <textarea class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" rows="8" placeholder="Tulis deskripsi..." required></textarea>
+                                </div>
+                                <div class="pt-4 flex justify-end gap-3 border-t border-gray-100">
+                                    <button type="reset" class="px-6 py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">Batal</button>
+                                    <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all">
+                                        <i class="fa-solid fa-paper-plane mr-2"></i> Publikasikan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: DAFTAR BERITA -->
+                <section id="daftar-berita" class="content-section hidden">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="border-b border-gray-100 px-8 py-5 bg-gray-50/50 flex justify-between items-center">
+                            <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-list text-blue-500 mr-2"></i> Daftar Berita</h2>
+                            <button onclick="switchMenu('tulis-berita', document.querySelector('.menu-item'))" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-blue-700">Tambah Baru</button>
+                        </div>
+                        <div class="p-6 overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
+                                        <th class="p-3">No</th>
+                                        <th class="p-3">Judul Berita</th>
+                                        <th class="p-3">Kategori</th>
+                                        <th class="p-3">Tanggal</th>
+                                        <th class="p-3 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="p-3">1</td>
+                                        <td class="p-3 font-semibold text-gray-800">Rapat Koordinasi Pelayanan Publik</td>
+                                        <td class="p-3"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">Berita</span></td>
+                                        <td class="p-3 text-sm text-gray-500">19 Agu 2026</td>
+                                        <td class="p-3 text-center">
+                                            <button class="text-blue-500 hover:text-blue-700 mx-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button class="text-red-500 hover:text-red-700 mx-1"><i class="fa-solid fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: DOKUMEN PUBLIK (SUDAH DIPERBAIKI) -->
+                <section id="dokumen" class="content-section hidden">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="border-b border-gray-100 px-8 py-5 bg-gray-50/50">
+                            <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-file-arrow-up text-blue-500 mr-2"></i> Upload Dokumen Publik</h2>
+                            <p class="text-sm text-gray-500 mt-1">Unggah dokumen resmi seperti laporan, peraturan, atau formulir di sini.</p>
+                        </div>
+                        <div class="p-8">
+                            <form id="form-dokumen" class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nama / Judul Dokumen <span class="text-red-500">*</span></label>
+                                    <input class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" type="text" placeholder="Masukkan nama dokumen..." required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori Dokumen <span class="text-red-500">*</span></label>
+                                    <select class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                                        <option>Laporan Kinerja Camat</option>
+                                        <option>Peraturan Kecamatan</option>
+                                        <option>Formulir Layanan Warga</option>
+                                        <option>Transparansi Anggaran</option>
+                                        <option>Lainnya</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">File Dokumen <span class="text-red-500">*</span></label>
+                                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors bg-gray-50">
+                                        <div class="space-y-2 text-center">
+                                            <i class="fa-solid fa-file-pdf text-4xl text-gray-400"></i>
+                                            <div class="flex text-sm text-gray-600 justify-center">
+                                                <label for="doc-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 px-2">
+                                                    <span>Pilih file dokumen</span>
+                                                    <!-- Batasan file untuk dokumen (PDF, Word, Excel) -->
+                                                    <input id="doc-upload" type="file" class="sr-only" accept=".pdf,.doc,.docx,.xls,.xlsx" required>
+                                                </label>
+                                                <p class="pl-1" id="doc-name-display">atau drag and drop</p>
+                                            </div>
+                                            <p class="text-xs text-gray-500">PDF, DOC, DOCX, XLS, XLSX (Maks. 5MB)</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-4 flex justify-end gap-3 border-t border-gray-100">
+                                    <button type="reset" class="px-6 py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">Batal</button>
+                                    <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all">
+                                        <i class="fa-solid fa-upload mr-2"></i> Upload Dokumen
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION PENGATURAN AKUN TELAH DIHAPUS -->
+
+            </div>
+        </main>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // 1. Set Tanggal Otomatis
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            if(document.getElementById('tanggal')) {
+                document.getElementById('tanggal').value = today;
+            }
+        });
+
+        // 2. Mencegah Error 405 saat tombol "Publikasikan" (Berita) diklik
+        document.getElementById('form-berita').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert("✅ Berita berhasil disimpan! (Simulasi HTML Statis)");
+            this.reset();
+            document.getElementById('file-name-display').innerText = "atau drag and drop";
+            document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
+        });
+
+        // 3. Mencegah Error 405 saat tombol "Upload" (Dokumen) diklik
+        document.getElementById('form-dokumen').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert("✅ Dokumen publik berhasil diunggah! (Simulasi HTML Statis)");
+            this.reset();
+            document.getElementById('doc-name-display').innerText = "atau drag and drop";
+            document.getElementById('doc-name-display').classList.remove('text-blue-600', 'font-semibold');
+        });
+
+        // 4. Menampilkan Nama File Gambar (Untuk Berita)
+        document.getElementById('file-upload').addEventListener('change', function(event) {
+            const fileNameDisplay = document.getElementById('file-name-display');
+            if (this.files && this.files.length > 0) {
+                fileNameDisplay.innerText = this.files[0].name;
+                fileNameDisplay.classList.add('text-blue-600', 'font-semibold');
+            } else {
+                fileNameDisplay.innerText = "atau drag and drop";
+                fileNameDisplay.classList.remove('text-blue-600', 'font-semibold');
+            }
+        });
+
+        // 5. Menampilkan Nama File Dokumen (Untuk Dokumen Publik)
+        document.getElementById('doc-upload').addEventListener('change', function(event) {
+            const docNameDisplay = document.getElementById('doc-name-display');
+            if (this.files && this.files.length > 0) {
+                docNameDisplay.innerText = this.files[0].name;
+                docNameDisplay.classList.add('text-blue-600', 'font-semibold');
+            } else {
+                docNameDisplay.innerText = "atau drag and drop";
+                docNameDisplay.classList.remove('text-blue-600', 'font-semibold');
+            }
+        });
+
+        // 6. Sistem Ganti Halaman (Tab) pada Sidebar
+        function switchMenu(sectionId, clickedElement) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.add('hidden'));
+            
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.className = 'menu-item flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-gray-800 border-l-4 border-transparent hover:border-gray-500 transition-colors';
+            });
+
+            clickedElement.className = 'menu-item flex items-center px-6 py-3 bg-blue-600 bg-opacity-20 text-blue-400 border-l-4 border-blue-500 font-semibold transition-colors';
+        }
+    </script>
+</body>
+</html>
