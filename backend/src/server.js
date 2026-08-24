@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { put } from '@vercel/blob';
 import bcrypt from 'bcryptjs';
 import cors from 'cors';
 import crypto from 'node:crypto';
@@ -8,7 +9,7 @@ import fs from 'node:fs/promises';
 import multer from 'multer';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { databaseName, initializeDatabase, pool } from './database.js';
+import { collection, databaseName, initializeDatabase, toObjectId } from './database.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +20,9 @@ const app = express();
 const port = process.env.PORT || 4000;
 const authSecret = process.env.AUTH_SECRET || 'ganti-kunci-rahasia-ini-di-file-env';
 const megabyte = 1024 * 1024;
+const useBlobStorage = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+const imageFileLimit = useBlobStorage ? 4 * megabyte : 5 * megabyte;
+const documentFileLimit = useBlobStorage ? 4 * megabyte : 10 * megabyte;
 const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173,http://127.0.0.1:5173')
   .split(',')
   .map((origin) => origin.trim());
@@ -60,21 +64,7 @@ function uploadType(req) {
   return req.path.startsWith('/api/documents') ? 'documents' : 'news';
 }
 
-const storage = multer.diskStorage({
-  destination: async (req, file, cb) => {
-    try {
-      const target = path.join(uploadsDir, uploadType(req));
-      await fs.mkdir(target, { recursive: true });
-      cb(null, target);
-    } catch (error) {
-      cb(error);
-    }
-  },
-  filename: (req, file, cb) => {
-    const safeName = file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '-');
-    cb(null, `${Date.now()}-${safeName}`);
-  }
-});
+const storage = multer.memoryStorage();
 
 const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 const imageMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -101,7 +91,7 @@ function allowedFileFilter(extensions, mimeTypes, message) {
 
 const newsUpload = multer({
   storage,
-  limits: { fileSize: 5 * megabyte, files: 1 },
+  limits: { fileSize: imageFileLimit, files: 1 },
   fileFilter: allowedFileFilter(
     imageExtensions,
     imageMimeTypes,
@@ -111,7 +101,7 @@ const newsUpload = multer({
 
 const documentUpload = multer({
   storage,
-  limits: { fileSize: 10 * megabyte, files: 1 },
+  limits: { fileSize: documentFileLimit, files: 1 },
   fileFilter: allowedFileFilter(
     documentExtensions,
     documentMimeTypes,
@@ -121,7 +111,7 @@ const documentUpload = multer({
 
 function signToken(user) {
   const payload = Buffer.from(JSON.stringify({
-    sub: String(user.id),
+    sub: asId(user),
     username: user.username,
     role: user.role,
     exp: Date.now() + (8 * 60 * 60 * 1000)
@@ -153,8 +143,37 @@ function requireAuth(req, res, next) {
   next();
 }
 
-function fileUrl(req, file) {
-  return file ? `/uploads/${uploadType(req)}/${file.filename}` : '';
+async function fileUrl(req, file) {
+  if (!file) return '';
+
+  const type = uploadType(req);
+  const safeName = file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '-');
+  const filename = `${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+  const pathname = `${type}/${filename}`;
+
+  if (useBlobStorage) {
+    const blob = await put(pathname, file.buffer, {
+      access: 'public',
+      addRandomSuffix: false,
+      contentType: file.mimetype
+    });
+    return blob.url;
+  }
+
+  const target = path.join(uploadsDir, type);
+  await fs.mkdir(target, { recursive: true });
+  await fs.writeFile(path.join(target, filename), file.buffer);
+  return `/uploads/${type}/${filename}`;
+}
+
+function asId(document) {
+  return document?._id ? String(document._id) : String(document?.id || '');
+}
+
+function asDate(value) {
+  if (!value) return '';
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value).slice(0, 10);
 }
 
 function createSlug(title) {
@@ -170,50 +189,56 @@ function createSlug(title) {
 
 function mapNews(row) {
   return {
-    id: String(row.id),
+    id: asId(row),
     title: row.title,
     slug: row.slug,
     category: row.category,
     summary: row.summary,
     content: row.content,
-    imageUrl: row.image_url || '',
-    date: row.published_date,
+    imageUrl: row.imageUrl || row.image_url || '',
+    date: asDate(row.publishedDate || row.published_date),
     status: row.status,
-    createdAt: row.created_at
+    createdAt: row.createdAt || row.created_at
   };
 }
 
 function mapDocument(row) {
   return {
-    id: String(row.id),
+    id: asId(row),
     title: row.title,
     category: row.category,
     year: String(row.year),
     description: row.description,
-    fileUrl: row.file_url,
+    fileUrl: row.fileUrl || row.file_url,
     status: row.status,
-    createdAt: row.created_at
+    createdAt: row.createdAt || row.created_at
   };
 }
 
 function mapSurvey(row) {
   return {
-    id: String(row.id),
-    respondentName: row.respondent_name || 'Anonim',
-    serviceType: row.service_type,
-    overallRating: row.overall_rating,
-    easeRating: row.ease_rating,
-    speedRating: row.speed_rating,
-    staffRating: row.staff_rating,
+    id: asId(row),
+    respondentName: row.respondentName || row.respondent_name || 'Anonim',
+    serviceType: row.serviceType || row.service_type,
+    overallRating: row.overallRating ?? row.overall_rating,
+    easeRating: row.easeRating ?? row.ease_rating,
+    speedRating: row.speedRating ?? row.speed_rating,
+    staffRating: row.staffRating ?? row.staff_rating,
     feedback: row.feedback || '',
-    createdAt: row.created_at
+    createdAt: row.createdAt || row.created_at
   };
 }
 
 app.get('/api/health', async (req, res, next) => {
   try {
-    await pool.query('SELECT 1');
-    res.json({ ok: true, service: 'web-kecamatan-backend', database: databaseName, storage: 'mysql' });
+    await collection('users').findOne({}, { projection: { _id: 1 } });
+    res.json({
+      ok: true,
+      service: 'web-kecamatan-backend',
+      database: databaseName,
+      storage: 'mongodb',
+      uploads: useBlobStorage ? 'vercel-blob' : 'local'
+    });
   } catch (error) {
     next(error);
   }
@@ -223,25 +248,24 @@ app.post('/api/auth/login', loginLimiter, async (req, res, next) => {
   try {
     const username = String(req.body.username || '').trim();
     const password = String(req.body.password || '');
-    const [rows] = await pool.execute(
-      'SELECT id, username, password_hash, full_name, role FROM users WHERE username = ? LIMIT 1',
-      [username]
-    );
-    const user = rows[0];
+    const user = await collection('users').findOne({ username });
     if (!user) return res.status(401).json({ message: 'Username atau password salah' });
 
-    const usesBcrypt = /^\$2[aby]\$/.test(user.password_hash);
+    const passwordHash = user.passwordHash || user.password_hash;
+    const usesBcrypt = /^\$2[aby]\$/.test(passwordHash);
     const passwordMatches = usesBcrypt
-      ? await bcrypt.compare(password, user.password_hash)
-      : password === user.password_hash;
+      ? await bcrypt.compare(password, passwordHash)
+      : password === passwordHash;
     if (!passwordMatches) return res.status(401).json({ message: 'Username atau password salah' });
 
     if (!usesBcrypt) {
-      const passwordHash = await bcrypt.hash(password, 12);
-      await pool.execute('UPDATE users SET password_hash = ? WHERE id = ?', [passwordHash, user.id]);
+      await collection('users').updateOne(
+        { _id: user._id },
+        { $set: { passwordHash: await bcrypt.hash(password, 12), updatedAt: new Date() }, $unset: { password_hash: '' } }
+      );
     }
 
-    const publicUser = { id: user.id, username: user.username, fullName: user.full_name, role: user.role };
+    const publicUser = { id: asId(user), username: user.username, fullName: user.fullName || user.full_name, role: user.role };
     res.json({ token: signToken(user), user: publicUser });
   } catch (error) {
     next(error);
@@ -250,13 +274,10 @@ app.post('/api/auth/login', loginLimiter, async (req, res, next) => {
 
 app.get('/api/auth/me', requireAuth, async (req, res, next) => {
   try {
-    const [rows] = await pool.execute(
-      'SELECT id, username, full_name, role FROM users WHERE id = ? LIMIT 1',
-      [req.user.sub]
-    );
-    const user = rows[0];
+    const userId = toObjectId(req.user.sub);
+    const user = userId ? await collection('users').findOne({ _id: userId }) : null;
     if (!user) return res.status(401).json({ message: 'Akun admin tidak ditemukan.' });
-    res.json({ id: user.id, username: user.username, fullName: user.full_name, role: user.role });
+    res.json({ id: asId(user), username: user.username, fullName: user.fullName || user.full_name, role: user.role });
   } catch (error) {
     next(error);
   }
@@ -264,9 +285,10 @@ app.get('/api/auth/me', requireAuth, async (req, res, next) => {
 
 app.get('/api/news', async (req, res, next) => {
   try {
-    const [rows] = await pool.query(
-      "SELECT * FROM news WHERE status = 'published' ORDER BY published_date DESC, created_at DESC"
-    );
+    const rows = await collection('news')
+      .find({ status: 'published' })
+      .sort({ publishedDate: -1, createdAt: -1 })
+      .toArray();
     res.json(rows.map(mapNews));
   } catch (error) {
     next(error);
@@ -275,9 +297,10 @@ app.get('/api/news', async (req, res, next) => {
 
 app.get('/api/news/:id', async (req, res, next) => {
   try {
-    const [rows] = await pool.execute("SELECT * FROM news WHERE id = ? AND status = 'published' LIMIT 1", [req.params.id]);
-    if (!rows[0]) return res.status(404).json({ message: 'Berita tidak ditemukan' });
-    res.json(mapNews(rows[0]));
+    const newsId = toObjectId(req.params.id);
+    const news = newsId ? await collection('news').findOne({ _id: newsId, status: 'published' }) : null;
+    if (!news) return res.status(404).json({ message: 'Berita tidak ditemukan' });
+    res.json(mapNews(news));
   } catch (error) {
     next(error);
   }
@@ -291,14 +314,22 @@ app.post('/api/news', requireAuth, newsUpload.single('image'), async (req, res, 
     const content = String(req.body.content || '').trim();
     if (!title || !date || !summary || !content) return res.status(400).json({ message: 'Data berita belum lengkap.' });
 
-    const [result] = await pool.execute(
-      `INSERT INTO news
-        (title, slug, category, summary, content, image_url, published_date, status, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, 'published', ?)`,
-      [title, createSlug(title), req.body.category || 'Berita', summary, content, fileUrl(req, req.file) || null, date, req.user.sub]
-    );
-    const [rows] = await pool.execute('SELECT * FROM news WHERE id = ?', [result.insertId]);
-    res.status(201).json(mapNews(rows[0]));
+    const now = new Date();
+    const document = {
+      title,
+      slug: createSlug(title),
+      category: req.body.category || 'Berita',
+      summary,
+      content,
+      imageUrl: await fileUrl(req, req.file),
+      publishedDate: date,
+      status: 'published',
+      createdBy: req.user.sub,
+      createdAt: now,
+      updatedAt: now
+    };
+    const result = await collection('news').insertOne(document);
+    res.status(201).json(mapNews({ ...document, _id: result.insertedId }));
   } catch (error) {
     next(error);
   }
@@ -306,17 +337,26 @@ app.post('/api/news', requireAuth, newsUpload.single('image'), async (req, res, 
 
 app.put('/api/news/:id', requireAuth, newsUpload.single('image'), async (req, res, next) => {
   try {
-    const [existingRows] = await pool.execute('SELECT * FROM news WHERE id = ? LIMIT 1', [req.params.id]);
-    const existing = existingRows[0];
+    const newsId = toObjectId(req.params.id);
+    const existing = newsId ? await collection('news').findOne({ _id: newsId }) : null;
     if (!existing) return res.status(404).json({ message: 'Berita tidak ditemukan' });
-    const imageUrl = req.file ? fileUrl(req, req.file) : existing.image_url;
-    await pool.execute(
-      'UPDATE news SET title = ?, category = ?, summary = ?, content = ?, image_url = ?, published_date = ? WHERE id = ?',
-      [req.body.title || existing.title, req.body.category || existing.category, req.body.summary || existing.summary,
-        req.body.content || existing.content, imageUrl, req.body.date || existing.published_date, req.params.id]
+    const imageUrl = req.file ? await fileUrl(req, req.file) : existing.imageUrl;
+    await collection('news').updateOne(
+      { _id: newsId },
+      {
+        $set: {
+          title: req.body.title || existing.title,
+          category: req.body.category || existing.category,
+          summary: req.body.summary || existing.summary,
+          content: req.body.content || existing.content,
+          imageUrl,
+          publishedDate: req.body.date || existing.publishedDate,
+          updatedAt: new Date()
+        }
+      }
     );
-    const [rows] = await pool.execute('SELECT * FROM news WHERE id = ?', [req.params.id]);
-    res.json(mapNews(rows[0]));
+    const updated = await collection('news').findOne({ _id: newsId });
+    res.json(mapNews(updated));
   } catch (error) {
     next(error);
   }
@@ -324,8 +364,9 @@ app.put('/api/news/:id', requireAuth, newsUpload.single('image'), async (req, re
 
 app.delete('/api/news/:id', requireAuth, async (req, res, next) => {
   try {
-    const [result] = await pool.execute('DELETE FROM news WHERE id = ?', [req.params.id]);
-    if (!result.affectedRows) return res.status(404).json({ message: 'Berita tidak ditemukan' });
+    const newsId = toObjectId(req.params.id);
+    const result = newsId ? await collection('news').deleteOne({ _id: newsId }) : { deletedCount: 0 };
+    if (!result.deletedCount) return res.status(404).json({ message: 'Berita tidak ditemukan' });
     res.json({ ok: true });
   } catch (error) {
     next(error);
@@ -334,9 +375,10 @@ app.delete('/api/news/:id', requireAuth, async (req, res, next) => {
 
 app.get('/api/documents', async (req, res, next) => {
   try {
-    const [rows] = await pool.query(
-      "SELECT * FROM public_documents WHERE status = 'published' ORDER BY year DESC, created_at DESC"
-    );
+    const rows = await collection('public_documents')
+      .find({ status: 'published' })
+      .sort({ year: -1, createdAt: -1 })
+      .toArray();
     res.json(rows.map(mapDocument));
   } catch (error) {
     next(error);
@@ -349,17 +391,23 @@ app.post('/api/documents', requireAuth, documentUpload.single('file'), async (re
     const category = String(req.body.category || 'Transparansi').trim();
     const year = String(req.body.year || '').trim();
     const description = String(req.body.description || '').trim();
-    const uploadedFileUrl = fileUrl(req, req.file);
+    const uploadedFileUrl = await fileUrl(req, req.file);
     if (!title || !year || !description || !uploadedFileUrl) return res.status(400).json({ message: 'Data dan file dokumen wajib dilengkapi.' });
 
-    const [result] = await pool.execute(
-      `INSERT INTO public_documents
-        (title, category, year, description, file_url, status, created_by)
-       VALUES (?, ?, ?, ?, ?, 'published', ?)`,
-      [title, category, year, description, uploadedFileUrl, req.user.sub]
-    );
-    const [rows] = await pool.execute('SELECT * FROM public_documents WHERE id = ?', [result.insertId]);
-    res.status(201).json(mapDocument(rows[0]));
+    const now = new Date();
+    const document = {
+      title,
+      category,
+      year,
+      description,
+      fileUrl: uploadedFileUrl,
+      status: 'published',
+      createdBy: req.user.sub,
+      createdAt: now,
+      updatedAt: now
+    };
+    const result = await collection('public_documents').insertOne(document);
+    res.status(201).json(mapDocument({ ...document, _id: result.insertedId }));
   } catch (error) {
     next(error);
   }
@@ -367,17 +415,25 @@ app.post('/api/documents', requireAuth, documentUpload.single('file'), async (re
 
 app.put('/api/documents/:id', requireAuth, documentUpload.single('file'), async (req, res, next) => {
   try {
-    const [existingRows] = await pool.execute('SELECT * FROM public_documents WHERE id = ? LIMIT 1', [req.params.id]);
-    const existing = existingRows[0];
+    const documentId = toObjectId(req.params.id);
+    const existing = documentId ? await collection('public_documents').findOne({ _id: documentId }) : null;
     if (!existing) return res.status(404).json({ message: 'Dokumen tidak ditemukan' });
-    const uploadedFileUrl = req.file ? fileUrl(req, req.file) : existing.file_url;
-    await pool.execute(
-      'UPDATE public_documents SET title = ?, category = ?, year = ?, description = ?, file_url = ? WHERE id = ?',
-      [req.body.title || existing.title, req.body.category || existing.category, req.body.year || existing.year,
-        req.body.description || existing.description, uploadedFileUrl, req.params.id]
+    const uploadedFileUrl = req.file ? await fileUrl(req, req.file) : existing.fileUrl;
+    await collection('public_documents').updateOne(
+      { _id: documentId },
+      {
+        $set: {
+          title: req.body.title || existing.title,
+          category: req.body.category || existing.category,
+          year: req.body.year || existing.year,
+          description: req.body.description || existing.description,
+          fileUrl: uploadedFileUrl,
+          updatedAt: new Date()
+        }
+      }
     );
-    const [rows] = await pool.execute('SELECT * FROM public_documents WHERE id = ?', [req.params.id]);
-    res.json(mapDocument(rows[0]));
+    const updated = await collection('public_documents').findOne({ _id: documentId });
+    res.json(mapDocument(updated));
   } catch (error) {
     next(error);
   }
@@ -385,8 +441,9 @@ app.put('/api/documents/:id', requireAuth, documentUpload.single('file'), async 
 
 app.delete('/api/documents/:id', requireAuth, async (req, res, next) => {
   try {
-    const [result] = await pool.execute('DELETE FROM public_documents WHERE id = ?', [req.params.id]);
-    if (!result.affectedRows) return res.status(404).json({ message: 'Dokumen tidak ditemukan' });
+    const documentId = toObjectId(req.params.id);
+    const result = documentId ? await collection('public_documents').deleteOne({ _id: documentId }) : { deletedCount: 0 };
+    if (!result.deletedCount) return res.status(404).json({ message: 'Dokumen tidak ditemukan' });
     res.json({ ok: true });
   } catch (error) {
     next(error);
@@ -406,14 +463,17 @@ app.post('/api/surveys', surveyLimiter, async (req, res, next) => {
       return res.status(400).json({ message: 'Isi survei melebihi batas karakter yang diizinkan.' });
     }
 
-    const [result] = await pool.execute(
-      `INSERT INTO survey_responses
-        (respondent_name, service_type, overall_rating, ease_rating, speed_rating, staff_rating, feedback)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [respondentName || null, serviceType, ratings.overallRating, ratings.easeRating,
-        ratings.speedRating, ratings.staffRating, feedback || null]
-    );
-    res.status(201).json({ id: String(result.insertId), message: 'Terima kasih. Survei Anda telah tersimpan.' });
+    const result = await collection('survey_responses').insertOne({
+      respondentName: respondentName || null,
+      serviceType,
+      overallRating: ratings.overallRating,
+      easeRating: ratings.easeRating,
+      speedRating: ratings.speedRating,
+      staffRating: ratings.staffRating,
+      feedback: feedback || null,
+      createdAt: new Date()
+    });
+    res.status(201).json({ id: String(result.insertedId), message: 'Terima kasih. Survei Anda telah tersimpan.' });
   } catch (error) {
     next(error);
   }
@@ -421,7 +481,7 @@ app.post('/api/surveys', surveyLimiter, async (req, res, next) => {
 
 app.get('/api/surveys', requireAuth, async (req, res, next) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM survey_responses ORDER BY created_at DESC');
+    const rows = await collection('survey_responses').find({}).sort({ createdAt: -1 }).toArray();
     res.json(rows.map(mapSurvey));
   } catch (error) {
     next(error);
@@ -430,8 +490,9 @@ app.get('/api/surveys', requireAuth, async (req, res, next) => {
 
 app.delete('/api/surveys/:id', requireAuth, async (req, res, next) => {
   try {
-    const [result] = await pool.execute('DELETE FROM survey_responses WHERE id = ?', [req.params.id]);
-    if (!result.affectedRows) return res.status(404).json({ message: 'Data survei tidak ditemukan' });
+    const surveyId = toObjectId(req.params.id);
+    const result = surveyId ? await collection('survey_responses').deleteOne({ _id: surveyId }) : { deletedCount: 0 };
+    if (!result.deletedCount) return res.status(404).json({ message: 'Data survei tidak ditemukan' });
     res.json({ ok: true });
   } catch (error) {
     next(error);
@@ -443,7 +504,9 @@ app.use((error, req, res, next) => {
   if (res.headersSent) return next(error);
   if (error instanceof multer.MulterError) {
     const message = error.code === 'LIMIT_FILE_SIZE'
-      ? (uploadType(req) === 'documents' ? 'Ukuran dokumen maksimal 10 MB.' : 'Ukuran gambar maksimal 5 MB.')
+      ? (uploadType(req) === 'documents'
+        ? `Ukuran dokumen maksimal ${documentFileLimit / megabyte} MB.`
+        : `Ukuran gambar maksimal ${imageFileLimit / megabyte} MB.`)
       : 'File tidak dapat diunggah. Pastikan hanya memilih satu file yang sesuai.';
     return res.status(400).json({ message });
   }
@@ -457,10 +520,10 @@ app.use((error, req, res, next) => {
 initializeDatabase()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Backend berjalan di http://localhost:${port} menggunakan MySQL ${databaseName}`);
+      console.log(`Backend berjalan di http://localhost:${port} menggunakan MongoDB ${databaseName}`);
     });
   })
   .catch((error) => {
-    console.error('Backend gagal terhubung ke MySQL:', error.message);
+    console.error('Backend gagal terhubung ke MongoDB:', error.message);
     process.exit(1);
   });

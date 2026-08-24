@@ -1,57 +1,61 @@
 import 'dotenv/config';
-import mysql from 'mysql2/promise';
+import bcrypt from 'bcryptjs';
+import { MongoClient, ObjectId } from 'mongodb';
 
-const databaseName = process.env.DB_NAME || 'kecamatan_db';
+export const databaseName = process.env.MONGODB_DB || 'kecamatan_db';
 
-export const pool = mysql.createPool({
-  host: process.env.DB_HOST || '127.0.0.1',
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: databaseName,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  dateStrings: true,
-  charset: 'utf8mb4'
+const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
+const client = new MongoClient(uri, {
+  maxPoolSize: Number(process.env.MONGODB_MAX_POOL_SIZE || 5)
 });
 
-export async function initializeDatabase() {
-  await pool.query('SELECT 1');
+let database;
 
-  const requiredTables = ['users', 'news', 'public_documents'];
-  const [tableRows] = await pool.query(
-    `SELECT TABLE_NAME
-       FROM information_schema.TABLES
-      WHERE TABLE_SCHEMA = ?`,
-    [databaseName]
-  );
-  const availableTables = new Set(tableRows.map((row) => row.TABLE_NAME));
-  const missingTables = requiredTables.filter((table) => !availableTables.has(table));
-
-  if (missingTables.length) {
-    throw new Error(`Tabel wajib belum tersedia: ${missingTables.join(', ')}`);
+export async function connectDatabase() {
+  if (!database) {
+    await client.connect();
+    database = client.db(databaseName);
   }
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS survey_responses (
-      id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-      respondent_name VARCHAR(160) NULL,
-      service_type VARCHAR(180) NOT NULL,
-      overall_rating TINYINT UNSIGNED NOT NULL,
-      ease_rating TINYINT UNSIGNED NOT NULL,
-      speed_rating TINYINT UNSIGNED NOT NULL,
-      staff_rating TINYINT UNSIGNED NOT NULL,
-      feedback TEXT NULL,
-      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      INDEX idx_survey_created_at (created_at),
-      INDEX idx_survey_service_type (service_type),
-      CONSTRAINT chk_survey_overall_rating CHECK (overall_rating BETWEEN 1 AND 5),
-      CONSTRAINT chk_survey_ease_rating CHECK (ease_rating BETWEEN 1 AND 5),
-      CONSTRAINT chk_survey_speed_rating CHECK (speed_rating BETWEEN 1 AND 5),
-      CONSTRAINT chk_survey_staff_rating CHECK (staff_rating BETWEEN 1 AND 5)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-  `);
+  return database;
 }
 
-export { databaseName };
+export async function initializeDatabase() {
+  const db = await connectDatabase();
+  await db.command({ ping: 1 });
+
+  await db.collection('users').createIndex({ username: 1 }, { unique: true });
+  await db.collection('news').createIndex({ slug: 1 }, { unique: true });
+  await db.collection('news').createIndex({ status: 1, publishedDate: -1, createdAt: -1 });
+  await db.collection('news').createIndex({ category: 1 });
+  await db.collection('public_documents').createIndex({ status: 1, year: -1, createdAt: -1 });
+  await db.collection('public_documents').createIndex({ category: 1 });
+  await db.collection('survey_responses').createIndex({ createdAt: -1 });
+  await db.collection('survey_responses').createIndex({ serviceType: 1 });
+
+  const defaultUsername = process.env.DEFAULT_ADMIN_USERNAME;
+  const defaultPassword = process.env.DEFAULT_ADMIN_PASSWORD;
+  if (defaultUsername && defaultPassword) {
+    const existingAdmin = await db.collection('users').findOne({ username: defaultUsername });
+    if (!existingAdmin) {
+      await db.collection('users').insertOne({
+        username: defaultUsername,
+        passwordHash: await bcrypt.hash(defaultPassword, 12),
+        fullName: process.env.DEFAULT_ADMIN_FULL_NAME || 'Admin Utama',
+        role: 'admin',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    }
+  }
+}
+
+export function collection(name) {
+  if (!database) {
+    throw new Error('Database belum terhubung. Jalankan initializeDatabase terlebih dahulu.');
+  }
+  return database.collection(name);
+}
+
+export function toObjectId(id) {
+  return ObjectId.isValid(id) ? new ObjectId(id) : null;
+}
