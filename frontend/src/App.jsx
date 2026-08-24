@@ -1282,6 +1282,7 @@ function AdminDashboard({ token, setToken, adminUser, setAdminUser, news, docume
   const [adminSection, setAdminSection] = useState('write-news');
   const [surveys, setSurveys] = useState([]);
   const [surveyStatus, setSurveyStatus] = useState({ loading: true, error: '' });
+  const [actionError, setActionError] = useState('');
   const authHeaders = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
 
   useEffect(() => {
@@ -1312,18 +1313,26 @@ function AdminDashboard({ token, setToken, adminUser, setAdminUser, news, docume
 
   async function submitNews(event) {
     event.preventDefault();
+    setActionError('');
     const body = new FormData();
     Object.entries(newsForm).forEach(([key, value]) => value && body.append(key, value));
-    await fetch(`${API_URL}/api/news`, { method: 'POST', headers: authHeaders, body });
+    const response = await fetch(`${API_URL}/api/news`, { method: 'POST', headers: authHeaders, body });
+    const data = await response.json();
+    if (response.status === 401) return logout();
+    if (!response.ok) return setActionError(data.message || 'Berita belum dapat disimpan.');
     setNewsForm(emptyNews);
     onRefresh();
   }
 
   async function submitDocument(event) {
     event.preventDefault();
+    setActionError('');
     const body = new FormData();
     Object.entries(documentForm).forEach(([key, value]) => value && body.append(key, value));
-    await fetch(`${API_URL}/api/documents`, { method: 'POST', headers: authHeaders, body });
+    const response = await fetch(`${API_URL}/api/documents`, { method: 'POST', headers: authHeaders, body });
+    const data = await response.json();
+    if (response.status === 401) return logout();
+    if (!response.ok) return setActionError(data.message || 'Dokumen belum dapat diunggah.');
     setDocumentForm(emptyDocument);
     onRefresh();
   }
@@ -1397,6 +1406,12 @@ function AdminDashboard({ token, setToken, adminUser, setAdminUser, news, docume
         </header>
 
         <main className="admin-main">
+          {actionError ? (
+            <div className="admin-alert admin-action-alert" role="alert">
+              <strong>Proses belum berhasil</strong>
+              <span>{actionError}</span>
+            </div>
+          ) : null}
           {adminSection === 'write-news' ? (
             <section className="admin-card">
               <div className="admin-card-header">
@@ -1431,8 +1446,8 @@ function AdminDashboard({ token, setToken, adminUser, setAdminUser, news, docume
                   <span className="admin-file-box">
                     <i className="fa-regular fa-image"></i>
                     <strong>{newsForm.image ? newsForm.image.name : 'Pilih file gambar'}</strong>
-                    <small>PNG, JPG, JPEG</small>
-                    <input type="file" accept="image/*" onChange={(e) => setNewsForm({ ...newsForm, image: e.target.files[0] })} />
+                    <small>JPG, JPEG, PNG, WEBP - maksimal 5 MB</small>
+                    <input type="file" accept=".jpg,.jpeg,.png,.webp" onChange={(e) => setNewsForm({ ...newsForm, image: e.target.files[0] })} />
                   </span>
                 </label>
                 <label>
@@ -1521,7 +1536,7 @@ function AdminDashboard({ token, setToken, adminUser, setAdminUser, news, docume
                   <span className="admin-file-box">
                     <i className="fa-solid fa-file-pdf"></i>
                     <strong>{documentForm.file ? documentForm.file.name : 'Pilih file dokumen'}</strong>
-                    <small>PDF, DOC, DOCX, XLS, XLSX</small>
+                    <small>PDF, DOC, DOCX, XLS, XLSX - maksimal 10 MB</small>
                     <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx" onChange={(e) => setDocumentForm({ ...documentForm, file: e.target.files[0] })} required />
                   </span>
                 </label>

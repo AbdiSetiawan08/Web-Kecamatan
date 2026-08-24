@@ -2270,6 +2270,10 @@ textarea {
   display: block;
 }
 
+.admin-action-alert {
+  margin-bottom: 18px;
+}
+
 .admin-input-icon {
   position: relative;
   display: block;

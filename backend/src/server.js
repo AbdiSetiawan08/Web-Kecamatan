@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import cors from 'cors';
 import crypto from 'node:crypto';
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
 import fs from 'node:fs/promises';
 import multer from 'multer';
 import path from 'node:path';
@@ -17,6 +18,7 @@ const uploadsDir = path.join(rootDir, 'uploads');
 const app = express();
 const port = process.env.PORT || 4000;
 const authSecret = process.env.AUTH_SECRET || 'ganti-kunci-rahasia-ini-di-file-env';
+const megabyte = 1024 * 1024;
 const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173,http://127.0.0.1:5173')
   .split(',')
   .map((origin) => origin.trim());
@@ -32,6 +34,27 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '1mb' }));
 app.use('/uploads', express.static(uploadsDir));
+
+if (process.env.TRUST_PROXY === 'true') {
+  app.set('trust proxy', 1);
+}
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  message: { message: 'Terlalu banyak percobaan login. Silakan coba kembali dalam 15 menit.' }
+});
+
+const surveyLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { message: 'Batas pengiriman survei telah tercapai. Silakan coba kembali nanti.' }
+});
 
 function uploadType(req) {
   return req.path.startsWith('/api/documents') ? 'documents' : 'news';
@@ -53,7 +76,48 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+const imageMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const documentExtensions = new Set(['.pdf', '.doc', '.docx', '.xls', '.xlsx']);
+const documentMimeTypes = new Set([
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+]);
+
+function allowedFileFilter(extensions, mimeTypes, message) {
+  return (req, file, cb) => {
+    const extension = path.extname(file.originalname).toLowerCase();
+    if (!extensions.has(extension) || !mimeTypes.has(file.mimetype)) {
+      const error = new Error(message);
+      error.status = 400;
+      return cb(error);
+    }
+    return cb(null, true);
+  };
+}
+
+const newsUpload = multer({
+  storage,
+  limits: { fileSize: 5 * megabyte, files: 1 },
+  fileFilter: allowedFileFilter(
+    imageExtensions,
+    imageMimeTypes,
+    'Gambar harus berformat JPG, JPEG, PNG, atau WebP.'
+  )
+});
+
+const documentUpload = multer({
+  storage,
+  limits: { fileSize: 10 * megabyte, files: 1 },
+  fileFilter: allowedFileFilter(
+    documentExtensions,
+    documentMimeTypes,
+    'Dokumen harus berformat PDF, DOC, DOCX, XLS, atau XLSX.'
+  )
+});
 
 function signToken(user) {
   const payload = Buffer.from(JSON.stringify({
@@ -155,7 +219,7 @@ app.get('/api/health', async (req, res, next) => {
   }
 });
 
-app.post('/api/auth/login', async (req, res, next) => {
+app.post('/api/auth/login', loginLimiter, async (req, res, next) => {
   try {
     const username = String(req.body.username || '').trim();
     const password = String(req.body.password || '');
@@ -219,7 +283,7 @@ app.get('/api/news/:id', async (req, res, next) => {
   }
 });
 
-app.post('/api/news', requireAuth, upload.single('image'), async (req, res, next) => {
+app.post('/api/news', requireAuth, newsUpload.single('image'), async (req, res, next) => {
   try {
     const title = String(req.body.title || '').trim();
     const date = String(req.body.date || '').trim();
@@ -240,7 +304,7 @@ app.post('/api/news', requireAuth, upload.single('image'), async (req, res, next
   }
 });
 
-app.put('/api/news/:id', requireAuth, upload.single('image'), async (req, res, next) => {
+app.put('/api/news/:id', requireAuth, newsUpload.single('image'), async (req, res, next) => {
   try {
     const [existingRows] = await pool.execute('SELECT * FROM news WHERE id = ? LIMIT 1', [req.params.id]);
     const existing = existingRows[0];
@@ -279,7 +343,7 @@ app.get('/api/documents', async (req, res, next) => {
   }
 });
 
-app.post('/api/documents', requireAuth, upload.single('file'), async (req, res, next) => {
+app.post('/api/documents', requireAuth, documentUpload.single('file'), async (req, res, next) => {
   try {
     const title = String(req.body.title || '').trim();
     const category = String(req.body.category || 'Transparansi').trim();
@@ -301,7 +365,7 @@ app.post('/api/documents', requireAuth, upload.single('file'), async (req, res, 
   }
 });
 
-app.put('/api/documents/:id', requireAuth, upload.single('file'), async (req, res, next) => {
+app.put('/api/documents/:id', requireAuth, documentUpload.single('file'), async (req, res, next) => {
   try {
     const [existingRows] = await pool.execute('SELECT * FROM public_documents WHERE id = ? LIMIT 1', [req.params.id]);
     const existing = existingRows[0];
@@ -329,7 +393,7 @@ app.delete('/api/documents/:id', requireAuth, async (req, res, next) => {
   }
 });
 
-app.post('/api/surveys', async (req, res, next) => {
+app.post('/api/surveys', surveyLimiter, async (req, res, next) => {
   try {
     const ratingFields = ['overallRating', 'easeRating', 'speedRating', 'staffRating'];
     const ratings = Object.fromEntries(ratingFields.map((field) => [field, Number(req.body[field])]));
@@ -377,6 +441,13 @@ app.delete('/api/surveys/:id', requireAuth, async (req, res, next) => {
 app.use((error, req, res, next) => {
   console.error(error);
   if (res.headersSent) return next(error);
+  if (error instanceof multer.MulterError) {
+    const message = error.code === 'LIMIT_FILE_SIZE'
+      ? (uploadType(req) === 'documents' ? 'Ukuran dokumen maksimal 10 MB.' : 'Ukuran gambar maksimal 5 MB.')
+      : 'File tidak dapat diunggah. Pastikan hanya memilih satu file yang sesuai.';
+    return res.status(400).json({ message });
+  }
+  if (error.status === 400) return res.status(400).json({ message: error.message });
   res.status(500).json({
     message: 'Terjadi kesalahan pada server.',
     detail: process.env.NODE_ENV === 'development' ? error.message : undefined
