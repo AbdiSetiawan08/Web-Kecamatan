@@ -28,20 +28,3 @@ npm run dev --prefix backend
 npm run dev --prefix frontend
 ```
 
-URL:
-
-- Website: `http://127.0.0.1:5173`
-- Admin: `http://127.0.0.1:5173/admin`
-- API: `http://localhost:4000`
-
-Login admin default:
-
-- Username: `admin`
-- Password: `admin123`
-
-Ubah kredensial admin lewat environment variable backend:
-
-```bash
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=password-baru
-```
