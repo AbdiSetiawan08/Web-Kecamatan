@@ -25,16 +25,45 @@ const imageFileLimit = useBlobStorage ? 4 * megabyte : 5 * megabyte;
 const documentFileLimit = useBlobStorage ? 4 * megabyte : 10 * megabyte;
 const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173,http://127.0.0.1:5173')
   .split(',')
-  .map((origin) => origin.trim());
+  .map((origin) => origin.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+
+  const normalized = origin.replace(/\/+$/, '');
+  if (allowedOrigins.includes(normalized)) return true;
+
+  try {
+    const hostname = new URL(normalized).hostname;
+    if (/^(localhost|127\.0\.0\.1)$/.test(hostname)) return true;
+    if (hostname.endsWith('.vercel.app')) return true;
+    if (hostname === 'vercel.app') return true;
+  } catch {
+    return false;
+  }
+
+  return false;
+}
 
 app.use(cors({
   origin(origin, callback) {
-    const isLocalDevelopment = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin || '');
-    if (!origin || allowedOrigins.includes(origin) || isLocalDevelopment) {
+    if (isAllowedOrigin(origin)) {
       return callback(null, true);
     }
     return callback(new Error('Origin tidak diizinkan oleh CORS'));
-  }
+  },
+  credentials: true
+}));
+
+app.options('*', cors({
+  origin(origin, callback) {
+    if (isAllowedOrigin(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Origin tidak diizinkan oleh CORS'));
+  },
+  credentials: true
 }));
 app.use(express.json({ limit: '1mb' }));
 app.use('/uploads', express.static(uploadsDir));
