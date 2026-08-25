@@ -96,20 +96,25 @@ function uploadType(req) {
 const storage = multer.memoryStorage();
 
 const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp']);
-const imageMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const imageMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/octet-stream']);
 const documentExtensions = new Set(['.pdf', '.doc', '.docx', '.xls', '.xlsx']);
 const documentMimeTypes = new Set([
   'application/pdf',
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'application/vnd.ms-excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/octet-stream'
 ]);
 
 function allowedFileFilter(extensions, mimeTypes, message) {
   return (req, file, cb) => {
     const extension = path.extname(file.originalname).toLowerCase();
-    if (!extensions.has(extension) || !mimeTypes.has(file.mimetype)) {
+    const mimeType = String(file.mimetype || '').toLowerCase();
+    const validExtension = extensions.has(extension);
+    const validMime = mimeTypes.has(mimeType) || (mimeType === 'application/octet-stream' && validExtension);
+
+    if (!validExtension || !validMime) {
       const error = new Error(message);
       error.status = 400;
       return cb(error);
