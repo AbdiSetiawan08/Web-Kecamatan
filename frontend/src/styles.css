@@ -1026,7 +1026,7 @@ textarea {
 .org-role-camat {
   position: absolute;
   top: 0;
-  left: 23%;
+  left: calc(25% - 5.25px);
   width: 25%;
   min-height: 122px;
   border-color: #052f6f;
@@ -1047,21 +1047,22 @@ textarea {
 
 .org-line-main {
   top: 122px;
-  left: 35.5%;
+  left: calc(37.5% - 5.25px);
   width: 2px;
   height: 358px;
 }
 
 .org-line-secretary {
   top: 146px;
-  left: 35.5%;
-  width: 36.5%;
+  left: calc(37.5% - 5.25px);
+  right: 32.5%;
+  width: auto;
   height: 2px;
 }
 
 .org-line-secretary-drop {
   top: 146px;
-  left: 72%;
+  left: 67.5%;
   width: 2px;
   height: 24px;
 }
@@ -1074,7 +1075,7 @@ textarea {
 .org-role-secretary {
   position: absolute;
   top: 170px;
-  left: 61%;
+  left: 56.5%;
   width: 22%;
   min-height: 92px;
   border-color: #08712f;
@@ -1110,8 +1111,8 @@ textarea {
   content: "";
   position: absolute;
   top: -36px;
-  left: 12.5%;
-  right: 12.5%;
+  left: calc(12.5% - 5.25px);
+  right: calc(12.5% - 5.25px);
   height: 2px;
   background: var(--org-line);
 }
@@ -1148,8 +1149,8 @@ textarea {
   content: "";
   position: absolute;
   top: -30px;
-  left: 12.5%;
-  right: 12.5%;
+  left: calc(12.5% - 15.75px);
+  right: calc(12.5% - 15.75px);
   height: 2px;
   background: var(--org-line);
 }
