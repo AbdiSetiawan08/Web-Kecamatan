@@ -998,7 +998,7 @@ textarea {
   position: relative;
   width: 100%;
   min-width: 920px;
-  min-height: 750px;
+  min-height: 810px;
   margin: 0 auto;
 }
 
@@ -1049,7 +1049,7 @@ textarea {
   top: 122px;
   left: calc(37.5% - 5.25px);
   width: 2px;
-  height: 358px;
+  height: 388px;
 }
 
 .org-line-secretary {
@@ -1090,16 +1090,16 @@ textarea {
 .org-role-secretary::after {
   content: "";
   position: absolute;
-  bottom: -36px;
+  bottom: -48px;
   left: 50%;
   width: 2px;
-  height: 36px;
+  height: 48px;
   background: var(--org-line);
 }
 
 .org-subdivision-row {
   position: absolute;
-  top: 298px;
+  top: 350px;
   left: 38%;
   width: 59%;
   display: grid;
@@ -1110,7 +1110,7 @@ textarea {
 .org-subdivision-row::before {
   content: "";
   position: absolute;
-  top: -36px;
+  top: -40px;
   left: calc(12.5% - 5.25px);
   right: calc(12.5% - 5.25px);
   height: 2px;
@@ -1128,16 +1128,16 @@ textarea {
 .org-role-subdivision::before {
   content: "";
   position: absolute;
-  top: -36px;
+  top: -40px;
   left: 50%;
   width: 2px;
-  height: 36px;
+  height: 40px;
   background: var(--org-line);
 }
 
 .org-section-row {
   position: absolute;
-  top: 510px;
+  top: 540px;
   left: 0;
   width: 100%;
   display: grid;
