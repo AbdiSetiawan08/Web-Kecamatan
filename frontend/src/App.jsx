@@ -684,57 +684,52 @@ function PublicSite({ news, documents, heroIndex, status, onAdmin, onSurvey }) {
             </div>
 
             <div className="org-chart org-chart-detailed" aria-label="Struktur organisasi Kecamatan Tanete Riaja">
-              <div className="org-leader">
-                <article className="org-card org-card-primary org-card-leader">
-                  <i className="fa-solid fa-user-tie"></i>
+              <div className="org-diagram">
+                <article className="org-role org-role-camat">
                   <span>Camat</span>
                 </article>
-              </div>
 
-              <div className="org-main-connector"></div>
+                <span className="org-line org-line-main" aria-hidden="true"></span>
+                <span className="org-line org-line-secretary" aria-hidden="true"></span>
+                <span className="org-line org-line-secretary-drop" aria-hidden="true"></span>
 
-              <section className="org-secretariat-group" aria-label="Sekretariat Kecamatan">
-                <article className="org-card org-card-secretary">
-                  <i className="fa-solid fa-user-gear"></i>
-                  <span>Sekretaris</span>
-                </article>
+                <section className="org-secretariat-branch" aria-label="Sekretariat Kecamatan">
+                  <article className="org-role org-role-secretary">
+                    <span>Sekretaris</span>
+                  </article>
 
-                <div className="org-support-grid">
+                  <div className="org-subdivision-row">
+                    {[
+                      'Subbagian Program',
+                      'Subbagian Keuangan',
+                      'Subbagian Umum dan SDM',
+                      'Fungsional Pelaksana'
+                    ].map((title) => (
+                      <article className="org-role org-role-subdivision" key={title}>
+                        <span>{title}</span>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+
+                <div className="org-section-row">
                   {[
-                    ['fa-solid fa-list-check', 'Subbagian Program'],
-                    ['fa-solid fa-coins', 'Subbagian Keuangan'],
-                    ['fa-solid fa-users-gear', 'Subbagian Umum dan SDM'],
-                    ['fa-solid fa-user-group', 'Fungsional Pelaksana']
-                  ].map(([icon, title]) => (
-                    <article className="org-card org-card-support" key={title}>
-                      <i className={icon}></i>
-                      <span>{title}</span>
-                    </article>
+                    'Seksi Tata Pemerintahan',
+                    'Seksi Pemberdayaan Masyarakat Desa',
+                    'Seksi Ketentraman dan Ketertiban Umum',
+                    'Seksi Perekonomian dan Pembangunan'
+                  ].map((title) => (
+                    <div className="org-section-branch" key={title}>
+                      <article className="org-role org-role-section">
+                        <span>{title}</span>
+                      </article>
+                      <span className="org-line org-line-functional" aria-hidden="true"></span>
+                      <article className="org-role org-role-functional">
+                        <span>Fungsional Pelaksana</span>
+                      </article>
+                    </div>
                   ))}
                 </div>
-              </section>
-
-              <div className="org-main-connector org-main-connector-sections"></div>
-
-              <div className="org-sections-grid">
-                {[
-                  ['fa-solid fa-building-columns', 'Seksi Tata Pemerintahan'],
-                  ['fa-solid fa-people-roof', 'Seksi Pemberdayaan Masyarakat Desa'],
-                  ['fa-solid fa-shield-halved', 'Seksi Ketentraman dan Ketertiban Umum'],
-                  ['fa-solid fa-chart-line', 'Seksi Perekonomian dan Pembangunan']
-                ].map(([icon, title]) => (
-                  <div className="org-section-column" key={title}>
-                    <article className="org-card org-card-section">
-                      <i className={icon}></i>
-                      <span>{title}</span>
-                    </article>
-                    <div className="org-section-connector"></div>
-                    <article className="org-card org-card-functional">
-                      <i className="fa-solid fa-user-group"></i>
-                      <span>Fungsional Pelaksana</span>
-                    </article>
-                  </div>
-                ))}
               </div>
             </div>
           </div>

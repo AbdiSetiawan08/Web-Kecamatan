@@ -800,10 +800,12 @@ textarea {
 .org-chart {
   border: 1px solid var(--line);
   border-radius: 10px;
-  overflow: hidden;
-  padding: 38px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 28px;
   background: #fff;
   box-shadow: 0 18px 48px rgba(16, 24, 40, 0.06);
+  scrollbar-color: #aeb8b2 #eef2ef;
 }
 
 .org-leader,
@@ -989,6 +991,208 @@ textarea {
   min-height: 104px;
   border-color: #a9cdb3;
   background: #f1f8f3;
+}
+
+.org-diagram {
+  --org-line: #53615a;
+  position: relative;
+  width: 100%;
+  min-width: 920px;
+  min-height: 750px;
+  margin: 0 auto;
+}
+
+.org-role {
+  z-index: 2;
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 9px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.1);
+}
+
+.org-role span {
+  font-size: 0.92rem;
+  font-weight: 900;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.org-role-camat {
+  position: absolute;
+  top: 0;
+  left: 23%;
+  width: 25%;
+  min-height: 122px;
+  border-color: #052f6f;
+  color: #fff;
+  background: linear-gradient(135deg, #073f89, #022d68);
+}
+
+.org-role-camat span {
+  font-size: 1.35rem;
+}
+
+.org-line {
+  z-index: 1;
+  position: absolute;
+  display: block;
+  background: var(--org-line);
+}
+
+.org-line-main {
+  top: 122px;
+  left: 35.5%;
+  width: 2px;
+  height: 358px;
+}
+
+.org-line-secretary {
+  top: 146px;
+  left: 35.5%;
+  width: 36.5%;
+  height: 2px;
+}
+
+.org-line-secretary-drop {
+  top: 146px;
+  left: 72%;
+  width: 2px;
+  height: 24px;
+}
+
+.org-secretariat-branch {
+  position: relative;
+  z-index: 1;
+}
+
+.org-role-secretary {
+  position: absolute;
+  top: 170px;
+  left: 61%;
+  width: 22%;
+  min-height: 92px;
+  border-color: #08712f;
+  color: #fff;
+  background: linear-gradient(135deg, #14883b, #08712f);
+}
+
+.org-role-secretary span {
+  font-size: 1.12rem;
+}
+
+.org-role-secretary::after {
+  content: "";
+  position: absolute;
+  bottom: -36px;
+  left: 50%;
+  width: 2px;
+  height: 36px;
+  background: var(--org-line);
+}
+
+.org-subdivision-row {
+  position: absolute;
+  top: 298px;
+  left: 38%;
+  width: 59%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.org-subdivision-row::before {
+  content: "";
+  position: absolute;
+  top: -36px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 2px;
+  background: var(--org-line);
+}
+
+.org-role-subdivision {
+  min-height: 110px;
+  border-color: #3d8650;
+  color: #173522;
+  background: #e8f3e9;
+  box-shadow: 0 6px 16px rgba(23, 89, 43, 0.08);
+}
+
+.org-role-subdivision::before {
+  content: "";
+  position: absolute;
+  top: -36px;
+  left: 50%;
+  width: 2px;
+  height: 36px;
+  background: var(--org-line);
+}
+
+.org-section-row {
+  position: absolute;
+  top: 510px;
+  left: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 42px;
+}
+
+.org-section-row::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 2px;
+  background: var(--org-line);
+}
+
+.org-section-branch {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.org-section-branch::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  width: 2px;
+  height: 30px;
+  background: var(--org-line);
+}
+
+.org-role-section {
+  min-height: 128px;
+  border-color: #063780;
+  color: #fff;
+  background: linear-gradient(135deg, #08428e, #063476);
+}
+
+.org-line-functional {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 2px;
+  height: 38px;
+  margin: 0 auto;
+}
+
+.org-role-functional {
+  min-height: 92px;
+  border-color: #4e76a8;
+  color: #142d4d;
+  background: #e6f0fa;
+  box-shadow: 0 6px 16px rgba(20, 54, 96, 0.08);
 }
 
 .service-grid {
